@@ -1,4 +1,5 @@
-require './item.rb'
+# require './item.rb'
+# require './inventory.rb'
 
 class GildedRose
 
