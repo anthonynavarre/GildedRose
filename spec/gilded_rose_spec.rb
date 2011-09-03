@@ -6,7 +6,7 @@ describe GildedRose do
     let(:name) { 'generic' }
     let(:sell_in) { 10 }
     let(:quality) { 5 }
-    let(:item) { Item.new(name, sell_in, quality) }
+    let(:item) { DepreciatingItem.new(name, sell_in, quality) }
 
     subject { GildedRose.new }
 
@@ -43,6 +43,7 @@ describe GildedRose do
       let(:name) { 'Aged Brie' }
       let(:quality) { 15 }
       let(:sell_in) { 5 }
+      let(:item) { AppreciatingItem.new(name, sell_in, quality) }
 
       before { subject.update_quality }
 
@@ -62,6 +63,7 @@ describe GildedRose do
       context 'when dealing with an item with a variable-rate of quality change' do
         let(:name) { 'Backstage passes to a TAFKAL80ETC concert' }
         let(:quality) { 45 }
+        let(:item) { EventSpecificItem.new(name, sell_in, quality) }
 
         context "when nearing the item's expiration date" do
           let(:sell_in) { 9 }
@@ -92,12 +94,25 @@ describe GildedRose do
 
     context 'when dealing with a "legendary" item' do
       let(:name) { 'Sulfuras, Hand of Ragnaros' }
+      let(:item) { LegendaryItem.new(name, sell_in, quality) }
 
       before { subject.update_quality }
 
       it 'does not affect the item' do
         item.quality.should == quality
         item.sell_in.should == sell_in
+      end
+    end
+
+    context 'when dealing with a "conjured" item' do
+      let(:name) { 'Conjured Mana Cake' }
+      let(:item) { ConjuredItem.new(name, sell_in, quality) }
+
+      before { subject.update_quality }
+
+      it 'drops the items quality twice as quickly' do
+        item.quality.should == quality - 2
+        item.sell_in.should == sell_in - 1
       end
     end
 
